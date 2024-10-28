@@ -33,21 +33,14 @@ func sendRequest(method string, params []interface{}) JsonResponse {
 
 	data := setData(method, params, 1)
 
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return JsonResponse{}
-	}
+	jsonData, _ := json.Marshal(data)
 
-	resp, err := http.Post(URL, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return JsonResponse{}
-	}
+	resp, _ := http.Post(URL, "application/json", bytes.NewBuffer(jsonData))
+
 	defer resp.Body.Close()
 
 	var response JsonResponse
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return JsonResponse{}
-	}
+	json.NewDecoder(resp.Body).Decode(&response)
 
 	return response
 }
