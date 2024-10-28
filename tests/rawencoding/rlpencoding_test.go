@@ -1,7 +1,7 @@
 package rawencoding_test
 
 import (
-	"Taiko/pkg/rawencoding"
+	"MultiTaiko/pkg/rawencoding"
 	"testing"
 )
 
