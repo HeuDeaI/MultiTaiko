@@ -1,26 +1,14 @@
 package jsonrpc
 
 import (
+	"MultiTaiko/pkg/models"
 	"bytes"
 	"encoding/json"
 	"net/http"
 )
 
-type JsonData struct {
-	Jsonrpc string        `json:"jsonrpc"`
-	Method  string        `json:"method"`
-	Params  []interface{} `json:"params"`
-	Id      int           `json:"id"`
-}
-
-type JsonResponse struct {
-	Jsonrpc string `json:"jsonrpc"`
-	Id      string `json:"id"`
-	Result  string `json:"result"`
-}
-
-func setData(method string, params []interface{}, id int) JsonData {
-	return JsonData{
+func setData(method string, params []interface{}, id int) models.JsonData {
+	return models.JsonData{
 		Jsonrpc: "2.0",
 		Method:  method,
 		Params:  params,
@@ -28,7 +16,7 @@ func setData(method string, params []interface{}, id int) JsonData {
 	}
 }
 
-func sendRequest(method string, params []interface{}) JsonResponse {
+func sendRequest(method string, params []interface{}) models.JsonResponse {
 	const URL = "https://rpc.taiko.xyz"
 
 	data := setData(method, params, 1)
@@ -39,13 +27,13 @@ func sendRequest(method string, params []interface{}) JsonResponse {
 
 	defer resp.Body.Close()
 
-	var response JsonResponse
+	var response models.JsonResponse
 	json.NewDecoder(resp.Body).Decode(&response)
 
 	return response
 }
 
-func getNonce(address string) string {
+func GetNonce(address string) string {
 	const method = "eth_getTransactionCount"
 	params := []interface{}{address, "latest"}
 
@@ -54,7 +42,7 @@ func getNonce(address string) string {
 	return response.Result
 }
 
-func getGasPrice() string {
+func GetGasPrice() string {
 	const method = "eth_gasPrice"
 	params := []interface{}{}
 
@@ -63,12 +51,12 @@ func getGasPrice() string {
 	return response.Result
 }
 
-func getGasLimit(address string, value string) string {
-	const ethWrapContact = "0xa51894664a773981c6c112c43ce576f315d5b1b6"
+func GetGasLimit(address string, value string) string {
+	const wethContractAddress = "0xa51894664a773981c6c112c43ce576f315d5b1b6"
 	const method = "eth_estimateGas"
 	params := []interface{}{
 		map[string]interface{}{
-			"to":    ethWrapContact,
+			"to":    wethContractAddress,
 			"from":  address,
 			"value": value,
 		},

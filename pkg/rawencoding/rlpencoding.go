@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"MultiTaiko/pkg/models"
+	"golang.org/x/crypto/sha3"
 )
 
 func StringRlpEcnode(value string) string {
@@ -34,4 +37,24 @@ func ListRlpEcnode(values []string) string {
 	stringPrefix := fmt.Sprintf("%x", prefix)
 
 	return stringPrefix + result
+}
+
+func HashTransaction(txData models.TransactionData) string {
+
+	stringTxData := []string{
+		txData.Nonce,
+		txData.GasPrice,
+		txData.GasLimit,
+		txData.To,
+		txData.Value,
+		txData.Data,
+	}
+
+	rlpEncodedTransaction := ListRlpEcnode(stringTxData)
+
+	hash := sha3.NewLegacyKeccak256()
+	hash.Write([]byte(rlpEncodedTransaction))
+	txHash := hash.Sum(nil)
+
+	return string(txHash)
 }
