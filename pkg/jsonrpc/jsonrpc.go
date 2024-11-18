@@ -1,33 +1,32 @@
 package jsonrpc
 
 import (
-	"MultiTaiko/pkg/models"
+	"MultiTaiko/pkg/data"
 	"bytes"
 	"encoding/json"
 	"net/http"
 )
 
-func setData(method string, params []interface{}, id int) models.JsonData {
-	return models.JsonData{
-		Jsonrpc: "2.0",
+func setData(method string, params []interface{}, id int) data.JsonData {
+	return data.JsonData{
+		Jsonrpc: data.JsonRpcVersion,
 		Method:  method,
 		Params:  params,
 		Id:      id,
 	}
 }
 
-func sendRequest(method string, params []interface{}) models.JsonResponse {
+func sendRequest(method string, params []interface{}) data.JsonResponse {
 	const URL = "https://rpc.taiko.xyz"
 
-	data := setData(method, params, 1)
+	requestData := setData(method, params, 1)
 
-	jsonData, _ := json.Marshal(data)
+	jsonData, _ := json.Marshal(requestData)
 
 	resp, _ := http.Post(URL, "application/json", bytes.NewBuffer(jsonData))
-
 	defer resp.Body.Close()
 
-	var response models.JsonResponse
+	var response data.JsonResponse
 	json.NewDecoder(resp.Body).Decode(&response)
 
 	return response
@@ -52,11 +51,10 @@ func GetGasPrice() string {
 }
 
 func GetGasLimit(address string, value string) string {
-	const wethContractAddress = "0xa51894664a773981c6c112c43ce576f315d5b1b6"
 	const method = "eth_estimateGas"
 	params := []interface{}{
 		map[string]interface{}{
-			"to":    wethContractAddress,
+			"to":    data.WethContractAddress,
 			"from":  address,
 			"value": value,
 		},

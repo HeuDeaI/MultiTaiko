@@ -1,11 +1,13 @@
 package rawencoding
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"MultiTaiko/pkg/models"
+	"MultiTaiko/pkg/data"
+
 	"golang.org/x/crypto/sha3"
 )
 
@@ -39,7 +41,7 @@ func ListRlpEcnode(values []string) string {
 	return stringPrefix + result
 }
 
-func HashTransaction(txData models.TransactionData) string {
+func HashTransaction(txData data.TransactionData) []byte {
 
 	stringTxData := []string{
 		txData.Nonce,
@@ -53,8 +55,20 @@ func HashTransaction(txData models.TransactionData) string {
 	rlpEncodedTransaction := ListRlpEcnode(stringTxData)
 
 	hash := sha3.NewLegacyKeccak256()
-	hash.Write([]byte(rlpEncodedTransaction))
+	hash.Write(txData) // txData is the RLP-encoded transaction
 	txHash := hash.Sum(nil)
 
-	return string(txHash)
+	return txHash
+}
+
+func preparePrivateKey(priveateKey string) {
+
+}
+
+func makeECDSASignature(priveateKey string) {
+
+}
+
+func GenerateRawData() {
+
 }

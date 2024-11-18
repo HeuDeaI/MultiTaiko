@@ -1,4 +1,4 @@
-package models
+package data
 
 type JsonData struct {
 	Jsonrpc string        `json:"jsonrpc"`
